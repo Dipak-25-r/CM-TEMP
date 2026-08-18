@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Ch 1 - Interactive Quiz (147 MCQs)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+       <link href="./dist/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Hind Vadodara', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col justify-between text-slate-800">
+
+    <header class="bg-indigo-600 text-white shadow-md py-4 px-6 sticky top-0 z-10">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-laptop-code text-2xl"></i>
+                <h1 class="text-lg md:text-xl font-bold">કમ્પ્યુટર અધ્યાય 1 - સંપૂર્ણ MCQ કલેક્શન (147 પ્રશ્નો)</h1>
+            </div>
+            <div id="quiz-progress-text" class="text-xs md:text-sm font-medium bg-indigo-700 px-3 py-1 rounded-full whitespace-nowrap">
+                પ્રશ્ન <span id="current-q-num">1</span> / <span id="total-q-num">147</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl w-full mx-auto p-4 md:p-6 flex-grow flex flex-col justify-center">
+
+        <div class="w-full bg-slate-200 rounded-full h-2.5 mb-6 overflow-hidden shadow-inner">
+            <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 0.7%"></div>
+        </div>
+
+        <div id="quiz-card" class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 md:p-8 transition-all">
+            
+            <div class="flex justify-between items-center mb-4 text-xs text-slate-500 font-medium border-b border-slate-100 pb-3">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-book-open text-indigo-500"></i> Chapter 1 MCQ Practice</span>
+                <div class="flex items-center gap-2">
+                    <label for="jump-select">પ્રશ્ન પર જાઓ:</label>
+                    <select id="jump-select" onchange="jumpToQuestion(this.value)" class="bg-slate-50 border border-slate-300 rounded px-2 py-1 text-slate-700 font-semibold focus:outline-none focus:border-indigo-500">
+                        </select>
+                </div>
+            </div>
+
+            <h2 id="question-text" class="text-lg md:text-xl font-bold text-slate-900 mb-6 leading-relaxed">
+                પ્રશ્ન લોડ થઈ રહ્યો છે...
+            </h2>
+
+            <div id="options-container" class="space-y-3 mb-6">
+                </div>
+
+            <div id="feedback-box" class="hidden p-4 rounded-xl mb-6 font-medium text-sm flex items-center gap-3">
+                <i id="feedback-icon" class="text-lg"></i>
+                <span id="feedback-text"></span>
+            </div>
+
+            <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                <div class="text-sm text-slate-500 font-medium">
+                    સ્કોર: <span id="live-score" class="text-indigo-600 font-bold">0</span>
+                </div>
+                <div class="flex gap-2">
+                    <button id="prev-btn" onclick="prevQuestion()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                        <span>પાછળ</span>
+                    </button>
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-medium shadow-md transition-all flex items-center gap-2">
+                        <span>આગળનો પ્રશ્ન</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="results-card" class="hidden bg-white rounded-2xl shadow-xl border border-slate-200 p-8 text-center my-auto">
+            <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-600 text-3xl">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2">ક્વિઝ પૂર્ણ થઈ!</h2>
+            <p class="text-slate-600 mb-6">કમ્પોઝરનો ઉપયોગ કરી HTML ફૉર્મની રચના (147 MCQs)</p>
+
+            <div class="bg-slate-50 rounded-xl p-6 max-w-xs mx-auto mb-8 border border-slate-100">
+                <p class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-1">તમારો અંતિમ સ્કોર</p>
+                <div class="text-4xl font-extrabold text-indigo-600 mb-1">
+                    <span id="final-score">0</span> / <span id="total-questions">147</span>
+                </div>
+                <p id="performance-msg" class="text-sm font-medium text-slate-600">બહુ સરસ!</p>
+            </div>
+
+            <button onclick="restartQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg transition-all inline-flex items-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>ફરીથી પ્રયાસ કરો</span>
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-4 text-xs text-slate-400 border-t border-slate-200 bg-white">
+        Standard 10 Computer Chapter 1 • Complete Question Bank (1-147)
+    </footer>
+
+    <script>
+        const quizData = [
+            { question: "1. વેબ સાઈટનો મુલાકાતી પોતાની વિગતો દાખલ કરવા માટે શેનો ઉપયોગ કરે છે?", options: ["A. ટેબલ", "B. ફૉર્મ", "C. ઈમેજ", "D. આપેલ પૈકી એક પણ નહિ"], correct: 1 },
+            { question: "2. વેબ સાઈટમાં મુલાકાતીની વિગતો દાખલ કરવા વિશે વધુ સંવાદન (Interactivity) અને નિયંત્રણ કોણ પૂરાં પાડે છે?", options: ["A. ટેબલ", "B. ફોર્મ", "C. ઈમેજ", "D. આપેલ પૈકી એક પણ નહિ"], correct: 1 },
+            { question: "3. વેબ સાઈટમાં જરૂરી વિગતો અને માહિતીને સુવ્યવસ્થિત રીતે દાખલ કરવા માટે તૈયાર કરવામાં આવતી રચનાને શું કહે છે?", options: ["A. ટેબલ", "B. ડેટાબેઝ", "C. હાઇપરલિન્ક", "D. ફોર્મ"], correct: 3 },
+            { question: "4. ફૉર્મ એ એક ... છે, જેનો ઉપયોગ ઉપયોગકર્તા પાસેથી જુદા જુદા પ્રકારની વિગતો મેળવવા માટે કરવામાં આવે છે.", options: ["A. ટેબલ", "B. ઈમેજ", "C. સંગ્રાહક", "D. એડિટર"], correct: 2 },
+            { question: "5. HTML ફૉર્મ નીચેનામાંથી કયા ઘટક ધરાવી શકે છે?", options: ["A. નિવેશ ઘટક", "B. ટેક્સ્ટ એરિયા ઘટક", "C. સિલેક્ટ અને ઑપ્શન ઘટક", "D. આપેલ તમામ"], correct: 3 },
+            { question: "6. નીચેનામાંથી કયું HTMLનું સાચું પૂરું નામ છે?", options: ["A. Hyper Text Markup Language", "B. Higher Text Markup Language", "C. Hyper Text Making Language", "D. Higher Terminal Making Language"], correct: 0 },
+            { question: "7. ઉપયોગકર્તા પાસેથી જુદા જુદા પ્રકારના નિવેશ એકત્રિત કરવા માટે નીચેનામાંથી કયા સંગ્રાહક એકમનો ઉપયોગ કરવામાં આવે છે?", options: ["A. Form", "B. Web page", "C. Tex", "D. Input"], correct: 0 },
+            { question: "8. ફૉર્મ ઘટક નીચેનામાંથી કઈ લાક્ષણિકતાનો ઉપયોગ કરે છે?", options: ["A. action", "B. method", "C. A તથા B બંને", "D. આપેલ પૈકી એક પણ નહિ"], correct: 2 },
+            { question: "9. HTML ફૉર્મ સબમિટ કરતી વખતે ફૉર્મની વિગતો કયા સ્થાને મોકલવાની છે, તેની સ્પષ્ટતા માટે કઈ લાક્ષણિકતાનો ઉપયોગ થાય છે?", options: ["A. action", "B. input", "C. value", "D. submit"], correct: 0 },
+            { question: "10. ફૉર્મમાં action લાક્ષણિકતા કિંમત તરીકે શું સ્વીકારે છે?", options: ["A. પૂર્ણાંક સંખ્યા", "B. અપૂર્ણાંક સંખ્યા", "C. ઉપયોગકર્તાનું નામ", "D. ફાઈલનું નામ"], correct: 3 },
+            { question: "11. ફૉર્મમાં વિગતો ઉમેર્યા પછી ઉપયોગકર્તા કયા બટન પર ક્લિક કરે છે, ત્યારે action લાક્ષણિક્તા ધરાવતી ફાઈલ ખોલવામાં આવે છે?", options: ["A. રિસેટ બટન", "B. સબમિટ બટન", "C. સેવ બટન", "D. કેન્સલ બટન"], correct: 1 },
+            { question: "12. ફૉર્મ ઘટક કેટલી લાક્ષણિક્તાઓ ધરાવે છે?", options: ["A. એક", "B. બે", "C. ત્રણ", "D. આપેલ પૈકી એક પણ નહિ"], correct: 1 },
+            { question: "13. method લાક્ષણિકતા સાથે કેટલી કિંમતોનો ઉપયોગ કરી શકાય છે?", options: ["A. બે", "B. ત્રણ", "C. ચાર", "D. પાંચ"], correct: 0 },
+            { question: "14. HTML ફૉર્મમાં method લાક્ષણિકતાની પૂર્વનિર્ધારિત કિંમત કઈ હોય છે?", options: ["A. put", "B. post", "C. get", "D. go"], correct: 2 },
+            { question: "15. method લાક્ષણિકતાની કઈ કિંમત વિગતોને વિનંતીમાં સમાવીને મોકલે છે?", options: ["A. post", "B. put", "C. get", "D. go"], correct: 2 },
+            { question: "16. method લાક્ષણિકતાની કઈ પદ્ધતિમાં વિગતોની લંબાઈની કોઈ મર્યાદા હોતી નથી?", options: ["A. get", "B. go", "C. put", "D. post"], correct: 3 },
+            { question: "17. ફૉર્મની વિગતો મોકલતી વખતે HTTP પદ્ધતિ સ્પષ્ટ કરવા માટે ફૉર્મની કઈ લાક્ષણિકતાનો ઉપયોગ કરવામાં આવે છે?", options: ["A. submit", "B. action", "C. method", "D. input"], correct: 2 },
+            { question: "18. method લાક્ષણિકતા સાથે કઈ કિંમતોનો ઉપયોગ કરી શકાય છે?", options: ["A. GET અને POST", "B. GET અને SET", "C. GET અને PUT", "D. SET અને POST"], correct: 0 },
+            { question: "19. નીચેનામાંથી કઈ પદ્ધતિ એક સમયે માત્ર મર્યાદિત માહિતી મોકલવાની અનુમતિ પૂરી પાડે છે?", options: ["A. GET", "B. POST", "C. SET", "D. PUT"], correct: 0 },
+            { question: "20. નીચેનામાંથી કઈ પદ્ધતિ HTTP વ્યવહાર દ્વારા વિગતોને બ્લૉક સ્વરૂપે મોકલવાની સુવિધા પૂરી પાડે છે?", options: ["A. GET", "B. SET", "C. PUT", "D. POST"], correct: 3 },
+            { question: "21. ફૉર્મ ઘટકનો અમલ કરવા માટે નીચેનામાંથી કયા ટૅગનો ઉપયોગ કરવામાં આવે છે?", options: ["A. <form> ... </form>", "B. <form> ... <form>", "C. </form> ... </form>", "D. <frm> ... </frm>"], correct: 0 },
+            { question: "22. નીચેનામાંથી કઈ HTMLનો <Form> ઘટકની લાક્ષણિકતા છે?", options: ["A. method", "B. type", "C. value", "D. initial selection"], correct: 0 },
+            { question: "23. નીચેનામાંથી કઈ HTMLમાં <Form> ઘટકની લાક્ષણિકતા નથી?", options: ["A. Action", "B. Method", "C. Name", "D. આપેલ તમામ"], correct: 2 },
+            { question: "24. કઈ HTTP પદ્ધતિ ફૉર્મમાંથી વિગતો મેળવી, તેને URLના અંતમાં ઉમેરી સર્વરને મોકલી આપે છે?", options: ["A. POST", "B. GET", "C. Submit", "D. Reset"], correct: 1 },
+            { question: "25. HTMLમાં નીચેનામાંથી કઈ લાક્ષણિકતા દ્વારા ફૉર્મમાં નિર્માણ કરવાના ફિલ્ડના પ્રકારનો સ્પષ્ટ નિર્દેશ કરવામાં આવે છે?", options: ["A. Input", "B. Type", "C. Name", "D. Value"], correct: 1 },
+            { question: "26. HTMLમાં ફૉર્મમાં ઉમેરવામાં આવનાર ફિલ્ડની સ્પષ્ટતા કયા ઘટક સાથે કરવામાં આવે છે?", options: ["A. <Select>", "B. <INPUT>", "C. <Textarea>", "D. <Option>"], correct: 1 },
+            { question: "27. Input ઘટકની કઈ લાક્ષણિકતા દ્વારા ફૉર્મમાં ઉમેરવામાં આવનાર ફિલ્ડની સ્પષ્ટતા કરવામાં આવે છે?", options: ["A. Name", "B. Value", "C. Textarea", "D. Type"], correct: 3 },
+            { question: "28. ફૉર્મમાં input ઘટક સાથે typeની કઈ લાક્ષણિક્તાનો ઉપયોગ કરી ફૉર્મમાં લખાણ ઉમેરવા માટે ટેક્સ્ટ-ફિલ્ડની રચના કરી શકાય છે?", options: ["A. text", "B. value", "C. info", "D. data"], correct: 0 },
+            { question: "29. HTML ફૉર્મમાં નીચેનામાંથી કયાં બટન ગોઠવી શકાય?", options: ["A. રેડિયો", "B. સબમિટ", "C. રિસેટ", "D. આપેલ તમામ"], correct: 3 },
+            { question: "30. HTML ફૉર્મની રચના કરવા માટે નીચેનામાંથી કયા ઘટકનો ઉપયોગ કરવામાં આવે છે?", options: ["A. Textarea", "B. Form", "C. Select અને Option", "D. Input"], correct: 1 },
+            { question: "31. HTML ફૉર્મમાં નિવેશ ઘટકોને અમલમાં મૂકવા કયા ટૅગનો ઉપયોગ થાય છે?", options: ["A. <table>", "B. <input>", "C. <font>", "D. <body>"], correct: 1 },
+            { question: "32. HTML ફૉર્મમાં <input> ટૅગનો ઉપયોગ કઈ લાક્ષણિકતા સાથે કરવામાં આવે છે?", options: ["A. type", "B. name", "C. value", "D. આપેલ તમામ"], correct: 3 },
+            { question: "33. HTML ફૉર્મમાં આવેલા ફિલ્ડને નામ આપવા માટે કઈ લાક્ષણિકતાનો ઉપયોગ કરવામાં આવે છે?", options: ["A. name", "B. value", "C. type", "D. આપેલ તમામ"], correct: 0 },
+            { question: "34. HTML ફૉર્મમાં ફિલ્ડને પૂર્વનિર્ધારિત કિંમત સાથે દર્શાવવા માટે Input ઘટક સાથે કઈ લાક્ષણિકતાનો ઉપયોગ કરવામાં આવે છે?", options: ["A. type", "B. name", "C. value", "D. આપેલ તમામ"], correct: 2 },
+            { question: "35. HTML ફૉર્મમાં લખાણ પ્રકારની વિગતો ઉમેરવા શેનો ઉપયોગ કરવામાં આવે છે?", options: ["A. રેડિયો બટન", "B. ચેક બૉક્સ", "C. ટેક્સ્ટ બૉક્સ", "D. પાસવર્ડ"], correct: 2 },
+            { question: "36. HTML ફૉર્મના ટેક્સ્ટ ફિલ્ડમાં ઉપયોગકર્તા કયા પ્રકારની વિગતો ઉમેરી શકે છે?", options: ["A. આંકડાકીય", "B. અક્ષર સ્વરૂપ", "C. ચિહ્ન સ્વરૂપ", "D. આપેલ તમામ"], correct: 3 },
+            { question: "37. નીચે આપેલા વિકલ્પોમાંથી, HTML ફૉર્મમાં ટેક્સ્ટ બૉક્સ ઉમેરવા માટેનો સાચો વિકલ્પ પસંદ કરો.", options: ['A. <INPUT type="text" name = "FirstName">', "B. <INPUT type text name = FirstName>", 'C. <INPUT type = "textbox" name = "FirstName">', "D. <INPUT type = textbox name = FirstName>"], correct: 0 },
+            { question: "38. HTML ફૉર્મમાં કયા ફિલ્ડમાં ઉમેરવામાં આવેલા અક્ષરો ઉપયોગકર્તાને દર્શાવવામાં આવતા નથી?", options: ["A. ટેક્સ્ટ બૉક્સ", "B. પાસવર્ડ", "C. ટેક્સ્ટ એરિયા", "D. ડ્રૉપડાઉન મેનૂ"], correct: 1 },
+            { question: "39. પાસવર્ડ ફિલ્ડ કયા ફિલ્ડ સાથે સામ્યતા ધરાવે છે?", options: ["A. ટેક્સ્ટ બૉક્સ", "B. રેડિયો બટન", "C. ચેક બૉક્સ", "D. ડ્રૉપડાઉન મેનૂ"], correct: 0 },
+            { question: "40. સામાન્ય રીતે ફૉર્મમાં ઉપલબ્ધ અનેક વિકલ્પોના જૂથમાંથી ફક્ત એક વિકલ્પ પસંદ કરવા શેનો ઉપયોગ કરવામાં આવે છે?", options: ["A. ચેક બૉક્સ", "B. રેડિયો બટન", "C. ટેક્સ્ટ બૉક્સ", "D. ડ્રૉપડાઉન"], correct: 1 },
+            { question: "41. ફૉર્મમાં ઉપલબ્ધ અનેક વિકલ્પોના જૂથમાંથી એકથી વધુ વિકલ્પ પસંદ કરવા માટે શેનો ઉપયોગ કરવામાં આવે છે?", options: ["A. ચેક બૉક્સ", "B. રેડિયો બટન", "C. A અથવા B", "D. આપેલ પૈકી એક પણ નહિ"], correct: 0 },
+            { question: "42. HTML ફૉર્મમાં કયા બટન પર ક્લિક કરવામાં આવે, ત્યારે ફૉર્મમાં દાખલ કરવામાં આવેલ વિગતો action લાક્ષણિકતાને આપવામાં આવેલ ફાઈલ તરફ મોકલવામાં આવે છે?", options: ["A. રેડિયો", "B. રિસેટ", "C. સબમિટ", "D. સેન્ડ"], correct: 2 },
+            { question: "43. HTML ફૉર્મમાં કયા બટન પર ક્લિક કરવાથી ફૉર્મમાં દાખલ કરવામાં આવેલ વિગતો દૂર કરી ફૉર્મને પૂર્વનિર્ધારિત કિંમતો સાથે દર્શાવવામાં આવે છે?", options: ["A. રેડિયો", "B. રિસેટ", "C. સબમિટ", "D. ક્લિયર"], correct: 1 },
+            { question: "44. HTML ફૉર્મમાં રેડિયો બટનના જૂથમાંથી એક સમયે કેટલા રેડિયો બટન પસંદ કરી શકાય છે?", options: ["A. એક", "B. બે", "C. ગમે તેટલા", "D. આપેલ પૈકી એક પણ નહિ"], correct: 0 },
+            { question: "45. HTML ફૉર્મમાં ચેક બૉક્સના જૂથમાંથી એક સમયે કેટલા ચેક બૉક્સ પસંદ કરી શકાય છે?", options: ["A. એક", "B. બે", "C. ગમે તેટલા", "D. આપેલ પૈકી એક પણ નહિ"], correct: 2 },
+            { question: "46. HTML ફૉર્મમાં રેડિયો બટનના જૂથમાંથી કોઈ ચોક્કસ રેડિયો બટનને પૂર્વનિર્ધારિત રીતે પસંદ થયેલ દર્શાવવા કઈ લાક્ષણિક્તાનો ઉપયોગ થાય છે?", options: ["A. selected", "B. check", "C. select", "D. checked"], correct: 0 },
+            { question: "47. HTML ફૉર્મમાં ચેક બૉક્સના જૂથમાંથી કોઈ ચોક્કસ ચેક બૉક્સને પૂર્વનિર્ધારિત રીતે પસંદ થયેલ દર્શાવવા માટે કઈ લાક્ષણિકતાનો ઉપયોગ થાય છે?", options: ["A. select", "B. checked", "C. selected", "D. check"], correct: 1 },
+            { question: "48. નીચેનામાંથી કઈ લાક્ષણિકતા દ્વારા ફૉર્મમાં નિર્માણ કરવાના ફિલ્ડના પ્રકારનો સ્પષ્ટ નિર્દેશ કરવામાં આવે છે?", options: ["A. Input", "B. Type", "C. Name", "D. Value"], correct: 1 },
+            { question: "49. નીચેનામાંથી કયા ટૅગનો ઉપયોગ ફૉર્મમાં રેડિયો-બટન, ટેક્સ્ટ બૉક્સ અને ચેક બૉક્સ જેવાં ઘટકો બનાવવા માટે થાય છે?", options: ["A. <INSERT> ... </INSERT>", "B. <INPUT> ... </INPUT>", "C. <SELECT> ... </SELECT>", "D. <OPTION>... </OPTION>"], correct: 1 },
+            { question: "50. HTML માં <INPUT Type = \"reset\" VALUE = \"label\"> આદેશ આપવાથી નીચેનાંમાંથી કયું બટન બનશે?", options: ["A. label", "B. reset", "C. submit", "D. value"], correct: 1 },
+            { question: "51. HTMLમાં નીચેનામાંથી કયો ઘટક એકથી વધુ લીટીના નિવેશ માટે અનુમતિ આપે છે?", options: ["A. <Textdata>", "B. <Input>", "C. <Selection>", "D. <Textarea>"], correct: 3 },
+            { question: "52. HTML ફૉર્મમાં ટેક્સ્ટ એરિયા ઘટકમાં વધુમાં વધુ કેટલા અક્ષરો ઉમેરી શકાય?", options: ["A. 255", "B. 256", "C. 35,570", "D. અમર્યાદિત"], correct: 3 },
+            { question: "53. HTML ફૉર્મમાં નોંધ (Comment), અહેવાલ (Report), સમજૂતી (Long Description) વગેરે પ્રકારની માહિતી દાખલ કરવા કયા ઘટકનો ઉપયોગ થાય છે?", options: ["A. ટેક્સ્ટ બૉક્સ", "B. ટેક્સ્ટ એરિયા", "C. મેમો", "D. ડ્રૉપડાઉન મેનૂ"], correct: 1 },
+            { question: "54. HTML ફૉર્મમાં ડ્રૉપડાઉન મેનૂની રચના કરવા કયા ટૅગનો ઉપયોગ થાય છે?", options: ["A. <drop>...</drop>", "B. <menu>...</menu>", "C. <select>...</select>", "D. <dropdown>...</dropdown>"], correct: 2 },
+            { question: "55. ડ્રૉપડાઉન મેનૂમાં વિવિધ કિંમતો ઉમેરવા શેનો ઉપયોગ થાય છે?", options: ["A. option", "B. checked", "C. insert", "D. add"], correct: 0 },
+            { question: "56. HTML ફૉર્મમાં ડ્રૉપડાઉન મેનૂના ઘટકો ઉમેરવા કયા ટૅગનો ઉપયોગ થાય છે?", options: ["A. <select>...</select>", "B. <option>...</option>", "C. <insert>...</insert>", "D. <element>...</element>"], correct: 1 },
+            { question: "57. નીચેનામાંથી કયા ઘટકનો ઉપયોગ ફૉર્મમાં ડ્રૉપડાઉન યાદી અથવા મેનૂની રચના કરવા માટે જરૂરી છે?", options: ["A. Input", "B. Textarea", "C. Select", "D. Form"], correct: 2 },
+            { question: "58. નીચે આપેલામાંથી કોણ IDE સૉફ્ટવેરનું ઉદાહરણ છે?", options: ["A. Allbeans", "B. Notebeans", "C. Textbeans", "D. Netbeans"], correct: 3 },
+            { question: "59. નીચેનામાંથી કયો એક સૉફ્ટવેર વિનિયોગ છે, જે પ્રોગ્રામરને સૉફ્ટવેરનો વિકાસ કરવા માટેની સંપૂર્ણ સુવિધા પૂરી પાડે છે?", options: ["A. IDE", "B. CSS", "C. HTML", "D. જાવાસ્ક્રિપ્ટ"], correct: 0 },
+            { question: "60. નીચેનામાંથી કયું એક સંપૂર્ણ વેબ-ઑથરિંગ સિસ્ટમ છે, જે વેબ પેજના વિકાસ અને વેબ ફાઈલના વહીવટનું સંચાલન કરે છે?", options: ["A. HTML", "B. કમ્પોઝર", "C. CSS", "D. જાવાસ્ક્રિપ્ટ"], correct: 1 },
+            { question: "61. IDEનું પૂરું નામ શું છે?", options: ["A. Internel Development Environment", "B. International Development Environment", "C. Indian Development Environment", "D. Integrated Development Environment"], correct: 3 },
+            { question: "62. IDE (Integrated Development Environment) ઉપયોગકર્તાને કઈ સુવિધા આપે છે?", options: ["A. ટેક્સ્ટ એડિટરની", "B. GUI (Graphical User Interface)", "C. કંપાઈલરની", "D. આપેલ તમામ"], correct: 3 },
+            { question: "63. GUIનું પૂરું નામ શું છે?", options: ["A. Graphical Useful Information", "B. Graphical User Interface", "C. Graphically Used Interface", "D. Graphically User Information"], correct: 1 },
+            { question: "64. નીચેનામાંથી કયું નિઃશુલ્ક, ઓપન સોર્સ વેબ વિકાસ માટેનું IDE છે?", options: ["A. HTML", "B. KompoZer", "C. Scite", "D. Base"], correct: 1 },
+            { question: "65. નીચેનામાંથી કયું ઓપન સોર્સ IDEનું ઉદાહરણ છે?", options: ["A. કમ્પોઝર (Kompozer)", "B. જેબિલ્ડર (JBuilder)", "C. નેટબિન્સ (Netbeans)", "D. આપેલ તમામ"], correct: 3 },
+            { question: "66. કમ્પોઝર (Kompozer) કઈ વેબ સાઈટ પરથી નિઃશુલ્ક ડાઉનલોડ કરી શકાય છે?", options: ["A. www.compozer.net", "B. www.kompozer.net", "C. www.kompozer.co.in", "D. આપેલ તમામ"], correct: 1 },
+            { question: "67. WYSIWYG એટલે શું?", options: ["A. When You See Is When You Get", "B. What You See Is When You Get", "C. What You See Is What You Get", "D. When You See Is What You Get"], correct: 2 },
+            { question: "68. કમ્પોઝર (Kompozer) કયા પ્રકારનું સૉફ્ટવેર છે?", options: ["A. ટેક્સ્ટ એડિટર", "B. ડેટાબેઝ", "C. પ્રેઝન્ટેશન", "D. વેબ ઑથરિંગ સિસ્ટમ"], correct: 3 },
+            { question: "69. કમ્પોઝર કોના દ્વારા સ્ટાઈલને સમર્થન આપે છે?", options: ["A. CSC", "B. CSS", "C. SCC", "D. SSC"], correct: 1 },
+            { question: "70. નીચેનામાંથી કયો પ્રોગ્રામ CSS સ્ટાઇલ (Style) ને સમર્થન આપે છે?", options: ["A. નોટપૅડ", "B. વર્ડપૅડ", "C. પેજ મેકર", "D. કમ્પોઝર"], correct: 3 },
+            { question: "71. કમ્પોઝરમાં જુદા જુદા ટૂલબાર અને સ્ટેટસ બાર દર્શાવવા માટે કયા વિકલ્પનો ઉપયોગ થાય છે?", options: ["A. View -> Toolbars", "B. View -> Status bars", "C. View -> Show/Hide", "D. Display -> Toolbars"], correct: 2 },
+            { question: "72. કમ્પોઝરમાં મેનૂ બારની નીચે કેટલા ટૂલબાર આવેલા હોય છે?", options: ["A. બે", "B. ત્રણ", "C. ચાર", "D. પાંચ"], correct: 1 },
+            { question: "73. કમ્પોઝરમાં ફૉર્મેટ ટૂલબાર કેટલા હોય છે?", options: ["A. બે", "B. ત્રણ", "C. ચાર", "D. આપેલ પૈકી એક પણ નહિ"], correct: 0 },
+            { question: "74. કમ્પોઝરમાં મેનૂ બારની નીચે કયું ટૂલબાર જોવા મળે છે?", options: ["A. Composition", "B. Format Toolbar 1", "C. Format Toolbar 2", "D. આપેલ તમામ"], correct: 3 },
+            { question: "75. કમ્પોઝરમાં નવી ફાઈલની રચના કરવા, ફાઈલ ખોલવા, સંગ્રહ કરવા તથા વેબ સાઈટને પ્રકાશિત કરવા કયા ટૂલબારનો ઉપયોગ થાય છે?", options: ["A. કમ્પોઝિશન", "B. ફૉર્મેટ ટૂલબાર1", "C. ફૉર્મેટ ટૂલબાર2", "D. આપેલ પૈકી એક પણ નહિ"], correct: 0 },
+            { question: "76. કમ્પોઝરમાં લખાણની ગોઠવણી કરવા, નિશાની અને અનુક્રમ ઉમેરવા માટે કયા ટૂલબારનો ઉપયોગ થાય છે?", options: ["A. કમ્પોઝિટ", "B. ફૉર્મેટ ટૂલબાર1", "C. ફૉર્મેટ ટૂલબાર2", "D. B તથા C બંને"], correct: 3 },
+            { question: "77. કમ્પોઝર વિન્ડોની મધ્યમાં કયો વિભાગ હોય છે?", options: ["A. સાઈટ મૅનેજર", "B. ખાલી વેબ પેજ", "C. A તથા B બંને", "D. આપેલ પૈકી એક પણ નહિ"], correct: 2 },
+            { question: "78. કમ્પોઝરમાં સાઈટમાં અથવા એકથી વધુ સાઈટ વચ્ચેના નેવિગેશન માટે ઉપયોગમાં લઈ શકાય તેવું સક્ષમ સાધન કયું હોય છે?", options: ["A. સાઈટ મૅનેજર", "B. નેવિગેશન મૅનેજર", "C. સાઈટ કન્ટ્રોલર", "D. નેવિગેશન કન્ટ્રોલર"], correct: 0 },
+            { question: "79. કમ્પોઝરમાં સાઈટ મૅનેજરને બંધ કરવા કયા બટનનો ઉપયોગ થાય છે?", options: ["A. Exit", "B. Close", "C. Return", "D. End"], correct: 1 },
+            { question: "80. કમ્પોઝરમાં સાઈટ મૅનેજરને બંધ કરવા કઈ ફંક્શન કી વપરાય છે?", options: ["A. F2", "B. F5", "C. F7", "D. F9"], correct: 3 },
+            { question: "81. કમ્પોઝર વિન્ડોની નીચે આવેલ જમણી બાજુના ભાગમાં Edit mode ટૂલબારમાં કેટલા મોડ હોય છે?", options: ["A. બે", "B. ત્રણ", "C. ચાર", "D. પાંચ"], correct: 1 },
+            { question: "82. કમ્પોઝરના Edit mode ટૂલબારમાં નીચેનામાંથી કયો મોડ હોય છે?", options: ["A. Normal", "B. HTML Tags", "C. Preview", "D. આપેલ તમામ"], correct: 3 },
+            { question: "83. કમ્પોઝરમાં કોષ્ટકની સીમારેખા સાથે પેજનો દેખાવ દર્શાવવા માટે Edit mode ટૂલબારનો કયો મોડ ઉપયોગી બને છે?", options: ["A. Normal", "B. HTML Tags", "C. Preview", "D. આપેલ તમામ"], correct: 0 },
+            { question: "84. ... મોડ બ્રાઉઝરમાં જોઈ શકાય તે પ્રકારનો પાનાનો દેખાવ દર્શાવે છે.", options: ["A. Normal", "B. HTML Tags", "C. Preview", "D. આપેલ તમામ"], correct: 2 },
+            { question: "85. કમ્પોઝરમાં નૉર્મલ વ્યૂ એ ... મોડ જેવો જ છે.", options: ["A. Normal", "B. HTML Tags", "C. Preview", "D. આપેલ તમામ"], correct: 2 },
+            { question: "86. જે ઉપયોગકર્તા HTML ભાષાથી પરિચિત છે, તેમના માટે કમ્પોઝરના Edit mode ટૂલબારનો ક્યો મોડ ઉપયોગી બને છે?", options: ["A. Normal", "B. HTML Tags", "C. Preview", "D. આપેલ તમામ"], correct: 1 },
+            { question: "87. કમ્પોઝરમાં તમામ ટૅગની શરૂઆત દર્શાવવા માટે કયા રંગની નિશાનીનો ઉપયોગ થાય છે?", options: ["A. પીળા", "B. લાલ", "C. લીલા", "D. આપેલ પૈકી એક પણ નહિ"], correct: 0 },
+            { question: "88. કમ્પોઝરમાં વેબ પેજની રૂપરેખા તૈયાર કરવા માટે કયા વિભાગનો ઉપયોગ થાય છે?", options: ["A. નેવિગેશન બાર", "B. સાઈટ મૅનેજર", "C. ડિઝાઈન", "D. એડિટ"], correct: 2 },
+            { question: "89. કમ્પોઝરમાં કયો વિભાગ સોર્સ કોડને સુધારવામાં મદદરૂપ થાય છે?", options: ["A. ડિઝાઈન", "B. સોર્સ", "C. એડિટ", "D. સ્પ્લીટ"], correct: 1 },
+            { question: "90. કમ્પોઝરમાં Cascade બટન કયા ટૂલબાર પર હોય છે?", options: ["A. Edit mode Toolbar", "B. Composition Toolbar", "C. Format Toolbar1", "D. Format Toolbar2"], correct: 1 },
+            { question: "91. કમ્પોઝરમાં નીચેનામાંથી કયો ટૂલબાર આવેલો નથી?", options: ["A. Preview Toolbar", "B. Format Toolbar1", "C. Format Toolbar2", "D. Composition Toolbar"], correct: 0 },
+            { question: "92. કમ્પોઝરમાં સાઈટ મૅનેજરના વિભાગને બંધ કરવા માટે કઈ શૉર્ટ કીનો ઉપયોગ થાય છે?", options: ["A. F5", "B. F7", "C. F9", "D. F2"], correct: 2 },
+            { question: "93. નીચેનામાંથી કયો વ્યૂ મોડ કમ્પોઝરમાં Edit mode ટૂલબારમાં આવેલો નથી?", options: ["A. નૉર્મલ", "B. HTML ટેગ", "C. પ્રિવ્યુ", "D. બ્લેન્ક ડૉક્યુમેન્ટ"], correct: 3 },
+            { question: "94. નીચેનામાંથી કયા ટૅબ કમ્પોઝરમાં Advanced Property Editor dialog box માં દેખાતો નથી?", options: ["A. Input Style", "B. HTML Attributes", "C. Javascript Events", "D. Inline Style"], correct: 0 },
+            { question: "95. નીચેનામાંથી કયો વિકલ્પ કમ્પોઝરમાં એક ખાલી અને નામ વગરનું (Untitled) વેબ પેજ દર્શાવે છે?", options: ["A. Edit mode ટૂલબાર", "B. ફૉર્મેટ ટૂલબાર1", "C. સાઈટ મૅનેજર", "D. Page pane"], correct: 3 },
+            { question: "96. કમ્પોઝરની વિન્ડોમાં, એડિટ મોડ ટૂલબારના કયા વિભાગ પર ક્લિક કરવાથી હાલમાં બનાવેલ ફૉર્મનાં સોર્સકોડને જોઈ શકાય છે?", options: ["A. Design", "B. પ્રિવ્યુ (Preview)", "C. Source", "D. Normal (સામાન્ય)"], correct: 2 },
+            { question: "97. ફૉર્મને શીર્ષક આપવા માટેની Heading-1 શૈલી નીચેનામાંથી કયા ટૂલબારમાંથી પસંદ કરવામાં આવે છે?", options: ["A. ફૉર્મેટ ટૂલબાર1", "B. ફૉર્મેટ ટૂલબાર2", "C. કમ્પોઝિશન ટૂલબાર", "D. સ્ટેટસ બાર"], correct: 0 },
+            { question: "98. ફૉર્મમાં જ્યારે પાનામાં કોઈ પણ વસ્તુ પર ક્લિક કરવામાં આવે છે, ત્યારે તેનું માળખું ક્યાં દર્શાવવામાં આવે છે?", options: ["A. કમ્પોઝિશન", "B. ફૉર્મેટ ટૂલબાર1", "C. સ્ટેટસ બાર", "D. ફૉર્મેટ ટૂલબાર2"], correct: 2 },
+            { question: "99. કમ્પોઝરમાં કી-બોર્ડ પર કઈ કી દબાવીને સાઈટ મૅનેજરના વિભાગને બંધ કરી શકાય છે?", options: ["A. F9", "B. F1", "C. F2", "D. F10"], correct: 0 },
+            { question: "100. કમ્પોઝરમાં ફૉર્મની અંદર લખાણ ઉમેરવા માટે કયા મેનૂ વિકલ્પનો ઉપયોગ કરવામાં આવે છે?", options: ["A. Edit Form -> Define Label", "B. Insert -> Form -> Define Label", "C. Insert Form -> Define Label", "D. File -> Define Label"], correct: 1 },
+            { question: "101. કમ્પોઝરમાં વિન્ડોની મધ્યમાં કેટલા વિભાગ (Panes) જોઈ શકાય છે?", options: ["A. 1", "B. 2", "C. 3", "D. 4"], correct: 1 },
+            { question: "102. કમ્પોઝરમાં Edit Mode ટૂલબારના કયા મોડમાં સ્ક્રિપ્ટનો અમલ કરવામાં આવતો નથી અને લિંકનો અમલ પણ કરી શકાતો નથી?", options: ["A. પ્રિવ્યૂ", "B. નૉર્મલ વ્યૂ", "C. HTML", "D. Design"], correct: 0 },
+            { question: "103. નીચેનામાંથી કયો વિકલ્પ 'WYSIWYG' તરીકે ઓળખાતા માધ્યમ સાથે વેબ પેજ એડિટર પૂરું પાડે છે?", options: ["A. સાઈટ મૅનેજર", "B. કમ્પોઝિશન ટૂલબાર", "C. કમ્પોઝર", "D. સ્ટેટસ બાર"], correct: 2 },
+            { question: "104. નીચેનામાંથી કયું ઓપન સોર્સ IDEsનું ઉદાહરણ નથી?", options: ["A. કમ્પોઝર", "B. એક્લિપ્સ", "C. જાવાસ્ક્રિપ્ટ", "D. નેટબિન્સ"], correct: 2 },
+            { question: "105. કમ્પોઝરનો કયો વ્યૂ, જેઓ HTMLથી પરિચિત છે તેવા ઉપયોગકર્તાને મદદરૂપ બને છે?", options: ["A. પ્રિવ્યૂ", "B. નૉર્મલ વ્યૂ", "C. HTML ટૅગ વ્યૂ", "D. Outline"], correct: 2 },
+            { question: "106. કમ્પોઝરમાં 'Save' બટન નીચે આપેલાં કયાં ટૂલબારમાં દેખાય છે?", options: ["A. Status bar", "B. Format Toolbar 1", "C. Composition Toolbar", "D. Format Toolbar 2"], correct: 2 },
+            { question: "107. કમ્પોઝરમાં જ્યારે form ડિફાઈન કરવામાં આવે છે ત્યારે કમ્પોઝરનાં untitled pageમાં કયાં કલરનો ડૉટેડ બૉક્સ બનેલો હોય છે?", options: ["A. આછો પીળો", "B. આછો ભૂરો", "C. આછો લાલ", "D. આછો લીલો"], correct: 1 },
+            { question: "108. કમ્પોઝરની ડાબી બાજુના પેજપનના ટૅબમાં નીચેનામાંથી કયા ટૅબ દેખાય છે?", options: ["A. Design, Split, Source", "B. Design, Shows, Source", "C. Design, Status, Source", "D. Design, Sheets, Source"], correct: 0 },
+            { question: "109. કમ્પોઝરની વિન્ડોમાં નીચે આવેલા જમણી બાજુના ભાગમાં નીચેનામાંથી કયું ટૂલબાર આપવામાં આવે છે?", options: ["A. સ્ટેટસ બાર", "B. સાઈટ મૅનેજર", "C. Edit mode ટૂલબાર", "D. કમ્પોઝિશન ટૂલબાર"], correct: 2 },
+            { question: "110. કમ્પોઝરના કયા વિભાગમાં વર્તમાન ઘટકનાં HTML સોર્સને દર્શાવવામાં આવે છે?", options: ["A. Design", "B. Source", "C. Split", "D. Preview"], correct: 1 },
+            { question: "111. કમ્પોઝરમાં આપણે કોઈ પણ ટૂલબારની ગોઠવણી બદલવા માંગતા હોઈએ તો તે ટૂલબાર પર રાઇટ-ક્લિક કરી નીચેનામાંથી કયા વિકલ્પ પર ક્લિક કરી શકાય?", options: ["A. Edit tool", "B. View tool", "C. Set tool", "D. Customize toolbar"], correct: 3 },
+            { question: "112. નીચેનામાંથી કયો ટૅબ કમ્પોઝરનાં ડાબી બાજુનાં પેજપન પર આવેલ નથી?", options: ["A. Source", "B. Split", "C. Splitter", "D. Design"], correct: 2 },
+            { question: "113. કમ્પોઝરમાં નીચેનામાંથી ક્યાં પ્રકારની ફાઈલ બનાવવામાં આવે છે?", options: ["A. .java", "B. .tex", "C. .frm", "D. .html"], correct: 3 },
+            { question: "114. કમ્પોઝરમાં નવી ફાઈલ બનાવવા ક્યા મેનૂ વિકલ્પનો ઉપયોગ કરવામાં આવે છે?", options: ["A. File -> Open", "B. File -> Create", "C. File -> Template", "D. File -> New"], correct: 3 },
+            { question: "115. કમ્પોઝરમાં નવી ફાઈલ બનાવવા માટેનું બટન કયા ટૂલબારમાં ઉપલબ્ધ હોય છે?", options: ["A. કમ્પોઝિશન", "B. ફૉર્મેટ ટૂલબાર1", "C. ફૉર્મેટ ટૂલબાર2", "D. આપેલ તમામ"], correct: 0 },
+            { question: "116. કમ્પોઝરમાં હયાત ફાઈલ ખોલવા માટે કયા મેનૂ વિકલ્પનો ઉપયોગ કરવામાં આવે છે?", options: ["A. File -> Open", "B. File -> Create", "C. File -> Template", "D. File -> New"], correct: 0 },
+            { question: "117. કમ્પોઝરમાં જે ફાઈલ હાલમાં જ ખોલી હોય તે ફાઈલ ખોલવા માટે કયા મેનૂ વિકલ્પનો ઉપયોગ થાય છે?", options: ["A. File -> New", "B. File -> Save", "C. File -> Recent Pages", "D. File -> Current Pages"], correct: 2 },
+            { question: "118. કમ્પોઝરમાં નવા ફૉર્મની રચના કરવા માટે કયા મેનૂ વિકલ્પનો ઉપયોગ થાય છે?", options: ["A. File -> New -> Form", "B. Insert -> Form -> Define Form", "C. Insert -> New Form", "D. Format -> Add -> Form"], correct: 1 },
+            { question: "119. કમ્પોઝરની અંદર કયા ટૂલબારનો ઉપયોગ નવી ફાઈલની રચના કરવા, ફાઈલ ખોલવા, સંગ્રહ કરવા તથા વેબ સાઈટને પ્રકાશિત કરવામાં થાય છે?", options: ["A. સ્ટેટસ બાર", "B. Edit Mode ટૂલબાર", "C. ફૉર્મેટ ટૂલબાર1", "D. કમ્પોઝિશન ટૂલબાર"], correct: 3 },
+            { question: "120. ફૉર્મમાં ઈનપુટ ટેક્સ્ટ ફિલ્ડ ઉમેરવા કયા મેનૂ વિકલ્પનો ઉપયોગ થાય છે?", options: ["A. Insert -> Text field", "B. Insert -> Form -> Text field", "C. Insert -> Form -> Text box", "D. Insert -> Form -> Form field"], correct: 3 },
+            { question: "121. ફૉર્મમાં સબમિટ બટન ઉમેરવા કયા મેનૂ વિકલ્પનો ઉપયોગ થાય છે?", options: ["A. Insert -> Submit", "B. Insert -> Form -> Submit", "C. Insert -> Form -> Form Field", "D. Insert -> Form -> Button"], correct: 2 },
+            { question: "122. કમ્પોઝર ફૉર્મમાં ટેક્સ્ટ બૉક્સમાં પૂર્વનિર્ધારિત કિંમત આપવા Form Field Properties ડાયલૉગ બૉક્સમાં કયા વિકલ્પનો ઉપયોગ થાય છે?", options: ["A. Default Text", "B. Initial Value", "C. Initial Text", "D. Default Value"], correct: 1 },
+            { question: "123. કમ્પોઝરમાં વેબ પેજનું શીર્ષક બદલવા માટે ક્યા મેનૂ વિકલ્પનો ઉપયોગ થાય છે?", options: ["A. Insert -> Page title", "B. Edit -> Page title and properties", "C. Format -> Page title and properties", "D. File -> Page title"], correct: 2 },
+            { question: "124. નીચેનામાંથી ક્યાં મેનૂનો ઉપયોગ કમ્પોઝરમાં ફૉર્મ પ્રોપર્ટીઝ ડાયલૉગ બૉક્સ લાવવા માટે ક્લિક કરવામાં આવે છે?", options: ["A. Insert -> Define Form", "B. Insert -> Define -> Properties", "C. Insert -> Form -> Define Form", "D. Insert -> Form -> Form Properties"], correct: 2 },
+            { question: "125. નીચેનામાંથી કયું એક્ષટેન્શન કમ્પોઝરમાં બનાવેલા વેબ પેજને આપવામાં આવે છે?", options: ["A. .html", "B. .Exe", "C. .Adb", "D. .Web"], correct: 0 },
+            { question: "126. કમ્પોઝરમાં File -> Save વિકલ્પ પર ક્લિક કરવાથી ક્યો ડાયલૉગ બૉક્સ ખૂલશે?", options: ["A. Save Page As", "B. Form properties", "C. Form field properties", "D. Page Title"], correct: 3 },
+            { question: "127. કમ્પોઝરમાં File -> New વિકલ્પ પર ક્લિક કરવાથી 'Create a new document or template' ડાયલૉગ બૉક્સ ખૂલશે તેમાં કયો વિકલ્પ પૂર્વનિર્ધારિત રીતે પસંદ થયેલો હોય છે?", options: ["A. A blank template", "B. A new document based on template", "C. A blank document", "D. આપેલ તમામ"], correct: 2 },
+            { question: "128. કમ્પોઝરની અંદર 'Form Field Properties' ડાયલૉગ બૉક્સમાં Text ફિલ્ડના પ્રકાર માટે નીચેનામાંથી કયા વિકલ્પ ઉપલબ્ધ છે?", options: ["A. Form Name, Action URL", "B. Field Name, Field Value", "C. Field Name, Initial Value", "D. Group Name, Field Value"], correct: 2 },
+            { question: "129. નીચેનામાંથી કયું બટન ફૉર્મમાં ક્લિક કરવાથી ફૉર્મમાં દાખલ કરવામાં આવેલી વિગતો દૂર કરી ફૉર્મને પૂર્વનિર્ધારિત કિંમતો સાથે પાછું દર્શાવવામાં આવે છે?", options: ["A. Reset", "B. Default", "C. Submit", "D. OK"], correct: 0 },
+            { question: "130. કમ્પોઝરમાં ફાઈલનો સંગ્રહ કરવા ક્યા મેનૂ વિકલ્પનો ઉપયોગ થાય છે?", options: ["A. File -> New", "B. File -> Open", "C. File -> Save", "D. File -> Export"], correct: 2 },
+            { question: "131. કમ્પોઝરમાં નવા ફૉર્મની રચના કરવા માટેનું ટૂલ બટન કયા ટૂલબાર પર હોય છે?", options: ["A. ફૉર્મેટ ટૂલબાર1", "B. ફૉર્મેટ ટૂલબાર2", "C. સ્ટેન્ડર્ડ ટૂલબાર", "D. કમ્પોઝિશન ટૂલબાર"], correct: 3 },
+            { question: "132. કમ્પોઝરમાં ટેક્સ્ટ એરિયા ઘટકનું કદ બદલવા માટે કઈ લાક્ષણિક્તાઓનો ઉપયોગ કરવામાં આવે છે?", options: ["A. Select, Option", "B. Action, Method", "C. Rows, Columns", "D. Height, Width"], correct: 2 },
+            { question: "133. ફૉર્મમાં ડ્રોપડાઉન લિસ્ટમાં વિવિધ વિકલ્પો ઉમેરવા માટે કયા બટન પર ક્લિક કરવામાં આવે છે?", options: ["A. Add list", "B. Add buttons", "C. Edit", "D. Add option"], correct: 3 },
+            { question: "134. કમ્પોઝરમાં ફૉર્મની વિગતો મોકલવાની હોય તે ફાઈલનું નામ Form Properties ડાયલૉગ બૉક્સમાં કયા વિકલ્પ હેઠળ આપવામાં આવે છે?", options: ["A. Target URL", "B. Action URL", "C. Send URL", "D. આપેલ તમામ"], correct: 1 },
+            { question: "135. HTML ફૉર્મમાં કયો ઘટક એકથી વધુ લીટીનું લખાણ નિવેશ કરવાની સુવિધા પૂરી પાડે છે?", options: ["A. <Select>", "B. <Textarea>", "C. <Option>", "D. <Radio button>"], correct: 1 },
+            { question: "136. Kompozerમાં પસંદગી યાદી (Selection List) બનાવવા માટે ક્યા મેનૂ વિકલ્પનો ઉપયોગ થાય છે?", options: ["A. Form -> Form Field -> Selection List", "B. Form -> Selection List", "C. Insert -> Selection List", "D. View -> Selection List"], correct: 1 },
+            { question: "137. રેડિયો બટનની રચના કરતી વખતે, તમામ શક્ય જવાબો માટે શું એકસમાન હોવું જોઈએ?", options: ["A. Field Value", "B. જૂથનું નામ (Group Name)", "C. Field Selected વિકલ્પ", "D. Initially Selected વિકલ્પ"], correct: 1 },
+            { question: "138. નિવેશ-ઘટક(Input element)ની કઈ લાક્ષણિકતા ઉમેરવામાં આવેલ અક્ષરો ઉપયોગકર્તા સમક્ષ દર્શાવવાને બદલે અક્ષરોનું અવાચ્ય સ્વરૂપમાં રૂપાંતરણ કરે છે?", options: ["A. Password", "B. Check box", "C. Text", "D. Reset"], correct: 0 },
+            { question: "139. HTMLમાં ફૉર્મમાં અમર્યાદિત અક્ષરો ઉમેરવા માટે ક્યાં ટેગનો ઉપયોગ થાય છે?", options: ["A. <INPUT>", "B. <select>", "C. <Textarea>", "D. <Option>"], correct: 2 },
+            { question: "140. કમ્પોઝરની અંદર Form -> Selection List મેનૂ વિકલ્પ પસંદ કરવાથી કયું ડાયલૉગ બૉક્સ ખૂલશે?", options: ["A. Selection List Properties", "B. Select Properties", "C. Selection List Options", "D. Selector List"], correct: 0 },
+            { question: "141. નીચેનામાંથી કયા ઘટકનો ઉપયોગ ફૉર્મમાં ડ્રોપડાઉન યાદી કે મેનૂની રચના કરવા માટે થાય છે?", options: ["A. option", "B. selection list", "C. textarea", "D. input"], correct: 1 },
+            { question: "142. કમ્પોઝરમાં જ્યારે Form -> Text Area વિકલ્પ પસંદ કરીએ ત્યારે નીચેનામાંથી કર્યું ડાયલૉગ બૉક્સ ખૂલશે?", options: ["A. Text Area of Form", "B. Text Area Properties", "C. Form Field Properties", "D. Advanced Edit Properties"], correct: 1 },
+            { question: "143. કમ્પોઝરમાં જ્યારે ફૉર્મ ખૂલે ત્યારે, જો આપણે રેડિયો બટનના કોઈ વિકલ્પને પૂર્વનિર્ધારિત રીતે પસંદ કરેલો રાખવા ઈચ્છતા હોઈએ તો ક્યા લખાણ આગળ આવેલું ચેકબૉક્સ પસંદ કરવામાં આવે છે?", options: ["A. Initially checked", "B. Initially selected", "C. Read only", "D. Advanced edit"], correct: 0 },
+            { question: "144. કમ્પોઝરમાં પૂર્વનિર્ધારિત રીતે ફૉર્મના બૅકગ્રાઉન્ડનો રંગ ક્યો હોય છે?", options: ["A. કાળો", "B. સફેદ", "C. પીળો", "D. ગુલાબી"], correct: 1 },
+            { question: "145. વેબ બ્રાઉઝરમાં શીર્ષક ક્યાં દર્શાવવામાં આવશે?", options: ["A. કમ્પોઝિશન ટૂલબાર", "B. સ્ટેટસ બાર", "C. ટાઈટલ બાર", "D. મેનૂ બાર"], correct: 2 },
+            { question: "146. કમ્પોઝરનાં કયા મેનૂ વિકલ્પનો ઉપયોગ કરીને લખાણને યોગ્ય રંગ આપી શકાય છે?", options: ["A. Format -> Change text color", "B. Format -> Text color", "C. Edit -> Text color", "D. File -> Change text color"], correct: 1 },
+            { question: "147. કમ્પોઝરનાં કયા મેનૂ વિકલ્પનો ઉપયોગ ફૉર્મને બૅકગ્રાઉન્ડમાં રંગ આપવા માટે થાય છે?", options: ["A. Format -> Page colors and Background", "B. File -> Page Background", "C. Format -> Page Background color", "D. Edit -> Change Background color"], correct: 0 }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+
+        // UI Elements
+        const questionText = document.getElementById("question-text");
+        const optionsContainer = document.getElementById("options-container");
+        const nextBtn = document.getElementById("next-btn");
+        const prevBtn = document.getElementById("prev-btn");
+        const liveScore = document.getElementById("live-score");
+        const currentQNum = document.getElementById("current-q-num");
+        const totalQNum = document.getElementById("total-q-num");
+        const progressBar = document.getElementById("progress-bar");
+        const feedbackBox = document.getElementById("feedback-box");
+        const feedbackText = document.getElementById("feedback-text");
+        const feedbackIcon = document.getElementById("feedback-icon");
+        const jumpSelect = document.getElementById("jump-select");
+
+        const quizCard = document.getElementById("quiz-card");
+        const resultsCard = document.getElementById("results-card");
+        const finalScore = document.getElementById("final-score");
+        const totalQuestions = document.getElementById("total-questions");
+        const performanceMsg = document.getElementById("performance-msg");
+
+        // Populate Dropdown
+        function initDropdown() {
+            totalQNum.innerText = quizData.length;
+            jumpSelect.innerHTML = "";
+            quizData.forEach((_, idx) => {
+                const opt = document.createElement("option");
+                opt.value = idx;
+                opt.innerText = `પ્રશ્ન ${idx + 1}`;
+                jumpSelect.appendChild(opt);
+            });
+        }
+
+        function loadQuestion() {
+            const currentData = quizData[currentIndex];
+            jumpSelect.value = currentIndex;
+
+            // Update Progress Bar & Text
+            currentQNum.innerText = currentIndex + 1;
+            const progressPercent = ((currentIndex + 1) / quizData.length) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+
+            // Reset UI
+            questionText.innerText = currentData.question;
+            optionsContainer.innerHTML = "";
+            nextBtn.classList.add("hidden");
+            feedbackBox.classList.add("hidden");
+
+            // Disable / Enable Prev Button
+            prevBtn.disabled = currentIndex === 0;
+
+            const existingAnswer = userAnswers[currentIndex];
+
+            // Render Options
+            currentData.options.forEach((opt, idx) => {
+                const btn = document.createElement("button");
+                btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-indigo-50/50 hover:border-indigo-300 transition-all font-medium flex justify-between items-center cursor-pointer group";
+                btn.innerHTML = `
+                    <span class="text-slate-700 group-hover:text-indigo-900">${opt}</span>
+                    <i class="fa-regular fa-circle text-slate-300 group-hover:text-indigo-400"></i>
+                `;
+                btn.onclick = () => selectOption(idx);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Reapply previous answer if visited
+            if (existingAnswer !== null) {
+                renderAnswerState(existingAnswer);
+            }
+        }
+
+        function selectOption(selectedIndex) {
+            if (userAnswers[currentIndex] !== null) return; // Prevent changing existing choice
+            
+            userAnswers[currentIndex] = selectedIndex;
+            
+            const currentData = quizData[currentIndex];
+            if (selectedIndex === currentData.correct) {
+                score++;
+                liveScore.innerText = score;
+            }
+
+            renderAnswerState(selectedIndex);
+        }
+
+        function renderAnswerState(selectedIndex) {
+            const currentData = quizData[currentIndex];
+            const allOptionBtns = optionsContainer.children;
+
+            for (let i = 0; i < allOptionBtns.length; i++) {
+                const btn = allOptionBtns[i];
+                btn.disabled = true;
+                btn.classList.remove("hover:bg-indigo-50/50", "hover:border-indigo-300", "cursor-pointer");
+                btn.classList.add("cursor-default");
+            }
+
+            const clickedBtn = allOptionBtns[selectedIndex];
+
+            if (selectedIndex === currentData.correct) {
+                clickedBtn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-semibold flex justify-between items-center text-emerald-900";
+                clickedBtn.querySelector("i").className = "fa-solid fa-circle-check text-emerald-600 text-lg";
+
+                feedbackBox.className = "p-4 rounded-xl mb-6 font-medium text-sm flex items-center gap-3 bg-emerald-100 text-emerald-800 border border-emerald-200";
+                feedbackIcon.className = "fa-solid fa-circle-check text-emerald-600 text-lg";
+                feedbackText.innerText = "સાચો જવાબ! ખૂબ સરસ.";
+            } else {
+                clickedBtn.className = "w-full text-left p-4 rounded-xl border-2 border-rose-500 bg-rose-50 font-semibold flex justify-between items-center text-rose-900";
+                clickedBtn.querySelector("i").className = "fa-solid fa-circle-xmark text-rose-600 text-lg";
+
+                const correctBtn = allOptionBtns[currentData.correct];
+                correctBtn.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-semibold flex justify-between items-center text-emerald-900";
+                correctBtn.querySelector("i").className = "fa-solid fa-circle-check text-emerald-600 text-lg";
+
+                feedbackBox.className = "p-4 rounded-xl mb-6 font-medium text-sm flex items-center gap-3 bg-rose-100 text-rose-800 border border-rose-200";
+                feedbackIcon.className = "fa-solid fa-circle-xmark text-rose-600 text-lg";
+                feedbackText.innerText = `ખોટો જવાબ! સાચો જવાબ છે: ${currentData.options[currentData.correct]}`;
+            }
+
+            feedbackBox.classList.remove("hidden");
+            nextBtn.classList.remove("hidden");
+        }
+
+        function jumpToQuestion(index) {
+            currentIndex = parseInt(index);
+            loadQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentIndex < quizData.length - 1) {
+                currentIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                loadQuestion();
+            }
+        }
+
+        function showResults() {
+            quizCard.classList.add("hidden");
+            resultsCard.classList.remove("hidden");
+
+            finalScore.innerText = score;
+            totalQuestions.innerText = quizData.length;
+
+            const percentage = (score / quizData.length) * 100;
+            if (percentage >= 80) {
+                performanceMsg.innerText = "ઉત્કૃષ્ટ પરિણામ! અભિનંદન 🎉";
+            } else if (percentage >= 50) {
+                performanceMsg.innerText = "સારું પરિણામ! હજુ સુધારો કરી શકાય છે 👍";
+            } else {
+                performanceMsg.innerText = "વધુ વાંચન અને તૈયારીની જરૂર છે 💪";
+            }
+        }
+
+        function restartQuiz() {
+            currentIndex = 0;
+            score = 0;
+            userAnswers = new Array(quizData.length).fill(null);
+            liveScore.innerText = score;
+            resultsCard.classList.add("hidden");
+            quizCard.classList.remove("hidden");
+            loadQuestion();
+        }
+
+        // Initialize Quiz
+        initDropdown();
+        loadQuestion();
+    </script>
+</body>
+</html>
